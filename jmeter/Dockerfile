@@ -23,7 +23,7 @@ FROM BASE
 
 # Copy contents of current directory to /jmeter
 COPY test           /jmeter/test/
-COPY entrypoint.sh  /jmeter/
+COPY entrypoint.sh  /jmeter/run
 
 RUN adduser -D -h /jmeter -u 10123 runner && \
     chown -R runner /jmeter
@@ -31,7 +31,7 @@ RUN adduser -D -h /jmeter -u 10123 runner && \
 USER runner
 
 # Make entrypoint.sh executable
-RUN chmod +x ./entrypoint.sh
+RUN chmod +x ./run
 
 # Edit jmeter.properties, point to correct user.properties
 ENV TESTDIR /jmeter/test
@@ -41,4 +41,4 @@ RUN sed -i -e "s|user.properties=user.properties|user.properties=${TESTDIR}/user
 ENV HEAP "-Xms1g -Xmx1g -XX:MaxMetaspaceSize=256m"
 
 # Execute entrypoint.sh
-CMD /bin/sh /jmeter/entrypoint.sh
+CMD /bin/sh /jmeter/run
