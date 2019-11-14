@@ -1,33 +1,44 @@
 # Use alpine linux as base image
-FROM alpine:latest
+FROM alpine:latest as BASE
+
+# Install openjre (required in order to run jmeter) 
+RUN apk add openjdk8-jre
 
 # Set work directory to be /jmeter
 WORKDIR /jmeter
 
-# Copy contents of current directory to /jmeter
-COPY . /jmeter
-
-# Install openjre (required in order to run jmeter) 
-RUN apk add --no-cache \
-	openjdk8-jre
-
 # Install jmeter
-ARG jmeterVersion
-ENV JMETER_VERSION ${jmeterVersion} 
-ENV JMETER_HOME apache-jmeter-${JMETER_VERSION}
+ARG JMETER_VERSION
+ENV JMETER_VERSION ${JMETER_VERSION} 
+ENV JMETER_HOME /jmeter/apache-jmeter-${JMETER_VERSION}
 ENV JMETER_BIN ${JMETER_HOME}/bin
-RUN wget -O /jmeter/apache-jmeter.tgz "http://mirror.its.dal.ca/apache//jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz" \
-	&& tar xvzf apache-jmeter.tgz
+RUN echo "version=${JMETER_VERSION}" && \
+    wget -q -O /jmeter/apache-jmeter.tgz "https://www-eu.apache.org/dist//jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz" && \
+    tar xzf apache-jmeter.tgz && \
+    rm /jmeter/apache-jmeter.tgz
 
-# Edit jmeter.properties, point to correct user.properties, use Rhino implementation of Javascript (Nashorn will be deprecated)
-ENV testDir /jmeter/test
-RUN sed -i "s|user.properties=user.properties|user.properties=${testDir}/user.properties|g; \
-	    s|#javascript.use_rhino=false|javascript.use_rhino=true|g" ${JMETER_BIN}/jmeter.properties
+
+
+FROM BASE 
+
+# Copy contents of current directory to /jmeter
+COPY test           /jmeter/test/
+COPY entrypoint.sh  /jmeter/
+
+RUN adduser -D -h /jmeter -u 10123 runner && \
+    chown -R runner /jmeter
+
+USER runner
 
 # Make entrypoint.sh executable
 RUN chmod +x ./entrypoint.sh
 
-COPY entrypoint.sh /entrypoint.sh
+# Edit jmeter.properties, point to correct user.properties
+ENV TESTDIR /jmeter/test
+RUN sed -i -e "s|user.properties=user.properties|user.properties=${TESTDIR}/user.properties|g;" \
+	    ${JMETER_BIN}/jmeter.properties
+
+ENV HEAP "-Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m"
 
 # Execute entrypoint.sh
-CMD /bin/sh ./entrypoint.sh
+CMD /bin/sh /jmeter/entrypoint.sh
