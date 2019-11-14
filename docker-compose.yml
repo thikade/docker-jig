@@ -6,12 +6,13 @@ services:
                 environment:
                         - INFLUXDB_DB=jmeter
         jmeter:
-                build: 
+                build:
                         context: "jmeter"
                         args:
-                                - jmeterVersion=5.1.1
+                                - JMETER_VERSION=5.2
                 environment:
-                        - JMETER_TEST=default_test_plan.jmx
+                        JMETER_TEST: default_test_plan.jmx
+                        HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
                 depends_on:
                         - influxdb
         grafana:

@@ -11,3 +11,5 @@ echo "running jmx file:  test/${JMETER_TEST}"
 echo "-------------------------------"
 
 jmeter -n -t test/${JMETER_TEST}
+
+tail -f ${JMETER_BIN}/jmeter.log
