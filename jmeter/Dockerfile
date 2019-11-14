@@ -38,7 +38,7 @@ ENV TESTDIR /jmeter/test
 RUN sed -i -e "s|user.properties=user.properties|user.properties=${TESTDIR}/user.properties|g;" \
 	    ${JMETER_BIN}/jmeter.properties
 
-ENV HEAP "-Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m"
+ENV HEAP "-Xms1g -Xmx1g -XX:MaxMetaspaceSize=256m"
 
 # Execute entrypoint.sh
 CMD /bin/sh /jmeter/entrypoint.sh

@@ -1,11 +1,13 @@
 #!/bin/bash
 
+export PATH=$PATH:${JMETER_BIN}
+
 env| grep JMETER
 
 echo "-------------------------------"
 echo "new JMETER HEAP=$HEAP"
 echo "-------------------------------"
+echo "running jmx file:  test/${JMETER_TEST}"
+echo "-------------------------------"
 
-export PATH=$PATH:${JMETER_BIN}
-echo PATH=$PATH
 jmeter -n -t test/${JMETER_TEST}
