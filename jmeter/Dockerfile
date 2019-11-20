@@ -12,6 +12,12 @@ ARG JMETER_VERSION
 ENV JMETER_VERSION ${JMETER_VERSION}
 ENV JMETER_HOME /jmeter/apache-jmeter-${JMETER_VERSION}
 ENV JMETER_BIN ${JMETER_HOME}/bin
+
+RUN apk add tzdata && \
+  cp /usr/share/zoneinfo/Europe/Vienna /etc/localtime && \
+  echo "Europe/Vienna" >  /etc/timezone && \
+  apk del tzdata
+
 RUN echo "version=${JMETER_VERSION}" && \
   wget -q -O /jmeter/apache-jmeter.tgz "https://www-eu.apache.org/dist//jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz" && \
   tar xzf apache-jmeter.tgz && \
