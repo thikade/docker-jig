@@ -15,8 +15,10 @@ services:
       context: "jmeter"
       args:
         - JMETER_VERSION=5.2
+    volumes:
+      - ${PWD}/volumes/jmeter:/data
     environment:
-      JMETER_TEST: default_test_plan.jmx
+      JMETER_PLAN: default_test_plan.jmx
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
     depends_on:
       - influxdb

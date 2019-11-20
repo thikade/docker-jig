@@ -1,1 +1,3 @@
-volumes/**
+volumes/*
+!volumes/jmeter/
+volumes/jmeter/results_*
