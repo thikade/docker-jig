@@ -29,12 +29,14 @@ FROM BASE
 
 # Copy contents of current directory to /jmeter
 COPY entrypoint.sh  /jmeter/run
+COPY bashrc         /jmeter/.bashrc
 
 RUN adduser -D -h /jmeter -u 1001 jmeter && \
-  chown -R jmeter /jmeter
+  chown -R jmeter /jmeter && \
+  chmod +x /jmeter/run
 
 # Make entrypoint.sh executable
-RUN mkdir /data && chown jmeter /data && chmod +x /jmeter/run
+# RUN mkdir /data &&  chown jmeter /data
 
 USER jmeter
 

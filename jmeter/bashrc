@@ -1,0 +1,4 @@
+export PATH=$PATH:$JMETER_BIN
+export PS1="\u \W $ "
+
+alias ll="ls -al"

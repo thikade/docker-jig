@@ -21,6 +21,9 @@ if [ ! -z "${ARGS/*notest*/}"] ; then
     else
       echo "no test plan found to run! (tried: \"/data/${JMETER_PLAN}\""
     fi
+else
+    echo "skipping Jmeter test run!"
 fi
 
-[ -z "${ARGS/*tail*/}" ] && tail -F /jmeter/jmeter.log 2>/dev/null
+
+[ -z "${ARGS/*tail*/}" ] && echo "tailing jmeter log ..." && tail -F /jmeter/jmeter.log 2>/dev/null
