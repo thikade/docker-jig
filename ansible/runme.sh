@@ -1,3 +1,3 @@
 EXECDIR=$(dirname $0)
-echo ansible-playbook  $EXECDIR/setupHost.yml
-ansible-playbook  $EXECDIR/setupHost.yml
+echo sudo ansible-playbook  $EXECDIR/setupHost.yml
+sudo ansible-playbook  $EXECDIR/setupHost.yml
