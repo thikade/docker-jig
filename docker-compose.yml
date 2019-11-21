@@ -28,7 +28,7 @@ services:
     container_name: telegraf
     hostname: tgf-appserver01
     environment:
-      - INFLUX_DB_HOST=http://controller.2i.at:8086
+      - INFLUX_DB_HOST=http://influxdb:8086
       - HOST_PROC=/rootfs/proc
       - HOST_SYS=/rootfs/sys
       - HOST_ETC=/rootfs/etc
