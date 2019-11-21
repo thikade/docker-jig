@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export PATH=$PATH:${JMETER_BIN}
 
@@ -8,13 +8,19 @@ echo "-------------------------------"
 echo "new JMETER HEAP=$HEAP"
 echo "-------------------------------"
 
-if [ -f "/data/${JMETER_PLAN}" ]; then
-  echo "running jmx file:  /data/${JMETER_PLAN}"
-  echo "-------------------------------"
+# Run only if 'notest' is NOT specified nywhere in arglist
+ARGS=$*
+echo "ARGS = $ARGS"
 
-  jmeter -n -t /data/${JMETER_PLAN}  -l /data/results_${JMETER_PLAN}_$(date +%Y%m%d-%H.%M.%S).jtl
-else
-  echo "no test plan found to run! (tried: \"/data/${JMETER_PLAN}\""
+if [ ! -z "${ARGS/*notest*/}"] ; then
+    if [ -f "/data/${JMETER_PLAN}" ]; then
+      echo "running jmx file:  /data/${JMETER_PLAN}"
+      echo "-------------------------------"
+
+      jmeter -n -t /data/${JMETER_PLAN}  -l /data/results_${JMETER_PLAN}_$(date +%Y%m%d-%H.%M.%S).jtl
+    else
+      echo "no test plan found to run! (tried: \"/data/${JMETER_PLAN}\""
+    fi
 fi
 
-[ "$1" = "tail" ] && tail -F /jmeter/jmeter.log
+[ -z "${ARGS/*tail*/}" ] && tail -F /jmeter/jmeter.log 2>/dev/null

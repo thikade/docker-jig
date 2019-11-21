@@ -2,7 +2,7 @@
 FROM alpine:latest as BASE
 
 # Install openjre (required in order to run jmeter)
-RUN apk add openjdk8-jre
+RUN apk add openjdk8-jre bash
 
 # Set work directory to be /jmeter
 WORKDIR /jmeter
@@ -45,4 +45,4 @@ RUN sed -i -e "s|user.properties=user.properties|user.properties=/data/user.prop
 ENV HEAP "-Xms1g -Xmx1g -XX:MaxMetaspaceSize=256m"
 
 # Execute entrypoint.sh
-CMD /bin/sh /jmeter/run "tail"
+CMD /bin/sh /jmeter/run tail notest
