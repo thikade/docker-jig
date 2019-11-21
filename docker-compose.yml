@@ -1,8 +1,15 @@
 version: "3"
 
+volumes:
+  chronograf:
+
 services:
   influxdb:
-    image: influxdb:1.7-alpine
+    image: influxdb:1.7.9-alpine-custom
+    build:
+      context: "influxdb"
+      args:
+        - INFLUXDB_VERSION=1.7.9
     container_name: influxdb
     ports:
       - "8086:8086"
@@ -15,8 +22,8 @@ services:
     image: chronograf:1.7-alpine
     container_name: chronograf
     volumes:
-      # Mount for chronograf database
-      - ${PWD}/chronograf:/var/lib/chronograf
+      # create a named Docker volume:
+      - chronograf:/var/lib/chronograf
     ports:
       # The WebUI for Chronograf is served on port 8888
       - "8888:8888"
@@ -24,7 +31,11 @@ services:
       - influxdb
 
   telegraf:
-    image: telegraf:1.12-alpine
+    image: telegraf:1.12.6-alpine-custom
+    build:
+      context: "telegraf"
+      args:
+        - TELEGRAF_VERSION=1.12.6
     container_name: telegraf
     hostname: tgf-appserver01
     environment:
@@ -63,6 +74,3 @@ services:
       - "3000:3000"
     depends_on:
       - influxdb
-
-volumes:
-  chronograf:
