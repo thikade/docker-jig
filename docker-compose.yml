@@ -3,6 +3,7 @@ version: "3"
 services:
   influxdb:
     image: influxdb:1.7-alpine
+    container_name: influxdb
     ports:
       - "8086:8086"
     environment:
@@ -12,16 +13,34 @@ services:
 
   chronograf:
     image: chronograf:1.7-alpine
+    container_name: chronograf
     volumes:
       # Mount for chronograf database
-      - chronograf:/var/lib/chronograf
+      - ${PWD}/chronograf:/var/lib/chronograf
     ports:
       # The WebUI for Chronograf is served on port 8888
       - "8888:8888"
     depends_on:
       - influxdb
 
+  telegraf:
+    image: telegraf:1.12-alpine
+    container_name: telegraf
+    hostname: tgf-appserver01
+    environment:
+      - INFLUX_DB_HOST=http://controller.2i.at:8086
+      - HOST_PROC=/rootfs/proc
+      - HOST_SYS=/rootfs/sys
+      - HOST_ETC=/rootfs/etc
+    volumes:
+      - ${PWD}/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro
+
   jmeter:
+    container_name: jmeter
     build:
       context: "jmeter"
       args:
@@ -35,6 +54,7 @@ services:
       - influxdb
 
   grafana:
+    container_name: grafana
     build:
       context: "grafana"
     volumes:

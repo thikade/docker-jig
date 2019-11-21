@@ -1,3 +1,4 @@
 volumes/*
 !volumes/jmeter/
 volumes/jmeter/results_*
+chronograf/*
