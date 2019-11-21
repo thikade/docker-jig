@@ -1,0 +1,101 @@
+---
+- name: postinstall configuration
+  hosts: localhost
+
+  vars:
+    services:
+      allow_sources:
+        - ip: "77.119/16"
+          comment: "Drei"
+        - ip: "193.170.163/24"
+          comment: "statistik"
+        - ip: "80.110/16"
+          comment: "UPC"
+      ports:
+        # - port: "40386"
+        #   proto: "tcp" # tcp is default!
+        #   comment: "grafana-alt"
+        # - port: "40387"
+        #   comment: "chronograf-alt"
+        - port: "3000"
+          comment: "grafana"
+        - port: "8086"
+          comment: "influxdb"
+        - port: "8888"
+          comment: "chronograf"
+
+  remote_user: root
+  become: no
+  gather_facts: no
+
+  tasks:
+    - name: get fully qualified hostname
+      shell: "hostname -f"
+      changed_when: false
+      register: gethostname
+
+    - name: get current timezone
+      shell: timedatectl status | grep 'Europe/Vienna' >> /dev/null
+      register: timezone_rc
+      check_mode: no
+      changed_when: false
+      failed_when: false
+
+    - name: set CEST timezone
+      command: "timedatectl set-timezone Europe/Vienna"
+      when: timezone_rc.rc > 0
+
+    - name: Change INPUT Policy to ACCEPT during UPDATES
+      iptables:
+        state: present
+        chain: INPUT
+        policy: "ACCEPT"
+
+    - name: Flush INPUT rules
+      iptables:
+        state: present
+        chain: INPUT
+        flush: true
+
+    # Allow related and established connections
+    # iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+    - name: Allow RELATED inbound traffic
+      iptables:
+        state: present
+        chain: INPUT
+        action: append
+        ctstate: ["RELATED", "ESTABLISHED"]
+        jump: ACCEPT
+        comment: allow related traffic
+
+    - name: Allow SSH inbound traffic
+      iptables:
+        state: present
+        chain: INPUT
+        action: append
+        protocol: tcp
+        destination_port: "{{ item }}"
+        jump: ACCEPT
+        comment: allow SSH traffic
+      with_items:
+        - "22"
+
+    - name: Allow inbound traffic for service ports
+      iptables:
+        state: present
+        chain: INPUT
+        action: append
+        protocol: "{{ item.0.proto | default('tcp') }}"
+        destination_port: "{{ item.0.port }}"
+        source: "{{ item.1.ip }}"
+        jump: ACCEPT
+        comment: "Allow from IP Range of {{ item.1.comment | default('-') }}  to  local service: {{ item.0.comment | default('-') }}"
+      with_nested:
+        - "{{ services.ports }}"
+        - "{{ services.allow_sources }}"
+
+    - name: Lockdown INPUT Policy (DROP)
+      iptables:
+        state: present
+        chain: INPUT
+        policy: "DROP"
