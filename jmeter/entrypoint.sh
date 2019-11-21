@@ -9,10 +9,10 @@ echo "new JMETER HEAP=$HEAP"
 echo "-------------------------------"
 
 # Run only if 'notest' is NOT specified nywhere in arglist
-ARGS=$*
-echo "ARGS = $ARGS"
+ARGS="$* -"
+echo "ARGS = \"$ARGS\""
 
-if [ ! -z "${ARGS/*notest*/}"] ; then
+if [ ! -z "${ARGS/*notest*/}" ] ; then
     if [ -f "/data/${JMETER_PLAN}" ]; then
       echo "running jmx file:  /data/${JMETER_PLAN}"
       echo "-------------------------------"
