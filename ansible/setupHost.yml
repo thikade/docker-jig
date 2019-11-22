@@ -6,8 +6,8 @@
     external_if: eth0
     services:
       allow_sources:
-        - ip: "77.119/16"
-          comment: "Drei"
+        - ip: "91.141.3.23/32"
+          comment: "3"
         - ip: "193.170.163/24"
           comment: "statistik"
         - ip: "80.110/17"
@@ -93,7 +93,34 @@
         log_level: "6"
         comment: log dropped packets
 
-    - name: DOCKER - Allow inbound traffic for service ports
+    ## DOCKER-USER chain
+
+    # DENY all UDP packets from outside, ie -i eth0
+    ###  iptables -t filter -A DOCKER-USER -i eth0 -p udp -j LOG --log-level 6 --log-prefix "DOCKER:UDPDROP:"
+    ###  iptables -t filter -A DOCKER-USER -i eth0 -p udp -j DROP
+    - name: DOCKER-USER - log EXTERNAL UDP packets
+      iptables:
+        state: present
+        chain: DOCKER-USER
+        action: append
+        protocol: "udp"
+        in_interface: "{{ external_if }}"
+        jump: LOG
+        log_prefix: "DOCKER:UDPDROP:"
+        log_level: "6"
+        comment: "log EXTERNAL UDP packets"
+
+    - name: DOCKER-USER - drop EXTERNAL UDP packets
+      iptables:
+        state: present
+        chain: DOCKER-USER
+        action: append
+        protocol: "udp"
+        in_interface: "{{ external_if }}"
+        jump: DROP
+        comment: "drop EXTERNAL UDP packets"
+
+    - name: DOCKER-USER - Allow inbound traffic for service ports
       iptables:
         state: present
         chain: DOCKER-USER
@@ -108,7 +135,8 @@
         - "{{ services.ports }}"
         - "{{ services.allow_sources }}"
 
-    - name: Log dropped External DOCKER packets
+    ## finally, LOG and DROP ALL incoming on eth0
+    - name: DOCKER-USER - Log all EXTERNAL packets
       # iptables -A LOG_DROP -j LOG --log-prefix "DOCKER:DROP: " --log-level 6
       iptables:
         state: present
@@ -118,17 +146,18 @@
         jump: LOG
         log_prefix: "DOCKER:DROP:"
         log_level: "6"
-        comment: log dropped inbound packets to DOCKER
+        comment: "Log all EXTERNAL packets"
 
-    - name: DOCKER - drop all other EXTERNAL traffic
+    - name: DOCKER-USER - drop all other EXTERNAL packets
       iptables:
         state: present
         chain: DOCKER-USER
         action: append
         in_interface: "{{ external_if }}"
         jump: DROP
+        comment: "drop all other EXTERNAL packets"
 
-    - name: DOCKER - add RETURN rule
+    - name: DOCKER-USER - add RETURN rule
       iptables:
         state: present
         chain: DOCKER-USER
