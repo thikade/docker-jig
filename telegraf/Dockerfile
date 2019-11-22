@@ -1,5 +1,4 @@
 FROM ppc64le/golang:1.13-alpine as BUILDER
-# FROM golang:1.13-alpine as BUILDER
 
 
 ARG TELEGRAF_VERSION
@@ -33,7 +32,6 @@ RUN git clone https://github.com/influxdata/influxdata-docker.git .
 #   https://raw.githubusercontent.com/influxdata/influxdata-docker/master/telegraf/1.12/alpine/Dockerfile
 
 FROM ppc64le/alpine:3.9
-# FROM alpine:3.9
 
 RUN echo 'hosts: files dns' >> /etc/nsswitch.conf && \
   apk add --no-cache iputils ca-certificates net-snmp-tools procps lm_sensors tzdata && \

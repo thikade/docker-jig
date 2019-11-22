@@ -1,0 +1,34 @@
+# docker-compose.yml fragment
+#  telegraf:
+#    image: telegraf:1.12.6-alpine-custom
+#    build:
+#      context: "telegraf"
+#      args:
+#        - TELEGRAF_VERSION=1.12.6
+#    container_name: telegraf
+#    hostname: tgf-appserver01
+#    environment:
+#      - INFLUX_DB_HOST=http://influxdb:8086
+#      - HOST_PROC=/rootfs/proc
+#      - HOST_SYS=/rootfs/sys
+#      - HOST_ETC=/rootfs/etc
+#    volumes:
+#      - ${PWD}/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - /sys:/rootfs/sys:ro
+#      - /proc:/rootfs/proc:ro
+#      - /etc:/rootfs/etc:ro
+
+TELEGRAF_VERSION=1.12.6
+
+ARCH=$(uname -m)
+
+IMAGE_TAG=${TELEGRAF_VERSION}-alpine-${ARCH}
+IMAGE=telegraf:${IMAGE_TAG}
+
+INFLUX_DB_HOST=http://influxdb:8086
+HOST_PROC=/rootfs/proc
+HOST_SYS=/rootfs/sys
+HOST_ETC=/rootfs/etc
+
+
