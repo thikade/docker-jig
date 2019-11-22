@@ -3,13 +3,14 @@
   hosts: localhost
 
   vars:
+    external_if: eth0
     services:
       allow_sources:
         - ip: "77.119/16"
           comment: "Drei"
         - ip: "193.170.163/24"
           comment: "statistik"
-        - ip: "80.110/16"
+        - ip: "80.110/17"
           comment: "UPC"
       ports:
         # - port: "40386"
@@ -45,11 +46,11 @@
       command: "timedatectl set-timezone Europe/Vienna"
       when: timezone_rc.rc > 0
 
-    - name: Change INPUT Policy to ACCEPT during UPDATES
+    - name: Change INPUT Policy to DROP
       iptables:
         state: present
         chain: INPUT
-        policy: "ACCEPT"
+        policy: "DROP"
 
     - name: Flush INPUT rules
       iptables:
@@ -59,6 +60,7 @@
 
     # Allow related and established connections
     # iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
     - name: Allow RELATED inbound traffic
       iptables:
         state: present
@@ -66,7 +68,7 @@
         action: append
         ctstate: ["RELATED", "ESTABLISHED"]
         jump: ACCEPT
-        comment: allow related traffic
+        comment: allow related inbound traffic from world
 
     - name: Allow SSH inbound traffic
       iptables:
@@ -80,22 +82,55 @@
       with_items:
         - "22"
 
-    - name: Allow inbound traffic for service ports
+    - name: Log dropped INPUT packets
+      # iptables -A LOG_DROP -j LOG --log-prefix "INPUT:DROP: " --log-level 6
       iptables:
         state: present
         chain: INPUT
         action: append
+        jump: LOG
+        log_prefix: "INPUT:DROP:"
+        log_level: "6"
+        comment: log dropped packets
+
+    - name: DOCKER - Allow inbound traffic for service ports
+      iptables:
+        state: present
+        chain: DOCKER-USER
+        action: append
         protocol: "{{ item.0.proto | default('tcp') }}"
         destination_port: "{{ item.0.port }}"
         source: "{{ item.1.ip }}"
+        in_interface: "{{ external_if }}"
         jump: ACCEPT
         comment: "Allow from IP Range of {{ item.1.comment | default('-') }}  to  local service: {{ item.0.comment | default('-') }}"
       with_nested:
         - "{{ services.ports }}"
         - "{{ services.allow_sources }}"
 
-    - name: Lockdown INPUT Policy (DROP)
+    - name: Log dropped External DOCKER packets
+      # iptables -A LOG_DROP -j LOG --log-prefix "DOCKER:DROP: " --log-level 6
       iptables:
         state: present
-        chain: INPUT
-        policy: "DROP"
+        chain: DOCKER-USER
+        action: append
+        in_interface: "{{ external_if }}"
+        jump: LOG
+        log_prefix: "DOCKER:DROP:"
+        log_level: "6"
+        comment: log dropped inbound packets to DOCKER
+
+    - name: DOCKER - drop all other EXTERNAL traffic
+      iptables:
+        state: present
+        chain: DOCKER-USER
+        action: append
+        in_interface: "{{ external_if }}"
+        jump: DROP
+
+    - name: DOCKER - add RETURN rule
+      iptables:
+        state: present
+        chain: DOCKER-USER
+        action: append
+        jump: RETURN
