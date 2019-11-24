@@ -1,0 +1,17 @@
+source ./env
+
+# generate default telegraf.conf by running
+#    ./run telegraf config 
+
+docker run --rm --name telegraf -h ${HOSTNAME} \
+        -e INFLUX_DB_HOST=$INFLUX_DB_HOST \
+        -e HOST_PROC=$HOST_PROC \
+        -e HOST_SYS=$HOST_SYS \
+        -e HOST_ETC=$HOST_ETC \
+        -v $(pwd)/telegraf.conf:/etc/telegraf/telegraf.conf:ro \
+        -v /var/run/docker.sock:/var/run/docker.sock:ro \
+        -v /proc:$HOST_PROC:ro \
+        -v /sys:$HOST_SYS:ro   \
+        -v /etc:$HOST_ETC:ro   \
+        $IMAGE $*
+
