@@ -50,19 +50,45 @@ services:
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
 
-  jmeter:
-    container_name: jmeter
+  jmeter-master:
+    container_name: jmeter-master
+    image: jmeter:5.2-alpine-generic
     build:
       context: "jmeter"
       args:
         - JMETER_VERSION=5.2
+    environment:
+      JMETER_ROLE: MASTER
+      JMETER_PLAN: /data/default_test_plan.jmx
+      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
+      JMETER_OPTS: -Dclient.rmi.localport=40000
+    ports:
+      - "40000:40000"
     volumes:
       - ${PWD}/volumes/jmeter:/data
+    # depends_on:
+    #   - influxdb
+
+  jmeter-slave:
+    container_name: jmeter-slave
+    image: jmeter:5.2-alpine-generic
+    entrypoint: /jmeter/run
+    build:
+      context: "jmeter"
+      args:
+        - JMETER_VERSION=5.2
     environment:
-      JMETER_PLAN: default_test_plan.jmx
-      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
-    depends_on:
-      - influxdb
+      JMETER_ROLE: SLAVE
+      HEAP: -Xms64m -Xmx512m -XX:MaxMetaspaceSize=256m
+      # Fixed RMI server port
+      RMI_HOST_DEF: -Dserver.rmi.localport=51000
+      # Fixed RMI registry port
+      SERVER_PORT: 51099
+    ports:
+      - "51000:51000"
+      - "51099:51099"
+    volumes:
+      - ${PWD}/volumes/jmeter:/data
 
   grafana:
     container_name: grafana
