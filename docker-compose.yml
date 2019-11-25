@@ -60,6 +60,7 @@ services:
     environment:
       JMETER_ROLE: MASTER
       JMETER_PLAN: /data/default_test_plan.jmx
+      JMETER_REMOTE_SERVERS: -R172.27.0.3:51099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
       JMETER_OPTS: -Dclient.rmi.localport=40000
     ports:

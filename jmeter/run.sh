@@ -39,32 +39,16 @@ then
 elif [ "$JMETER_ROLE" = "MASTER" ]
 then
   TS=$(date +%Y%m%d-%H.%M.%S)
-  echo "$TS : starting the JMeter MASTER process ..."
-  JMETER_TESTPLAN=${1:-$JMETER_PLAN}
-  # BASE_NAME=$(basename ${JMETER_TESTPLAN})
-  mkdir /data/$TS
-  jmeter -n -t ${JMETER_TESTPLAN}  -l ${JMETER_TESTPLAN}.results-$(date +%Y%m%d-%H.%M.%S).jtl -e -o /data/$TS  $*
-  echo "$TS : finished."
+  if [ -f "$JMETER_PLAN" ]
+  then
+    echo "$TS : starting the JMeter MASTER process ..."
+    test -d /data/$TS || mkdir /data/$TS
+    jmeter -n -t ${JMETER_PLAN}  -l ${JMETER_PLAN}.results-$(date +%Y%m%d-%H.%M.%S).jtl -e -o /data/$TS  ${JMETER_REMOTE_SERVERS} $*
+    echo "$TS : finished."
+  else
+    echo "ERROR: unable to read JMeter plan: \"$JMETER_PLAN\" !"
+  fi
 else
   echo "FATAL ERROR: Env var 'JMETER_ROLE' needs to be either 'MASTER' or 'SLAVE' !"
   echo "Aborting..."
 fi
-
-
-#
-# # Run only if 'notest' is NOT specified nywhere in arglist
-# ARGS="$* -"
-# echo "ARGS = \"$ARGS\""
-#
-# if [ ! -z "${ARGS/*notest*/}" ] ; then
-#     if [ -f "/data/${JMETER_TESTPLAN}" ]; then
-#       echo "running jmx file:  /data/${JMETER_TESTPLAN}"
-#       echo "-------------------------------"
-#
-#       jmeter -n -t /data/${JMETER_TESTPLAN}  -l /data/results_${JMETER_TESTPLAN}_$(date +%Y%m%d-%H.%M.%S).jtl
-#     else
-#       echo "no test plan found to run! (tried: \"/data/${JMETER_TESTPLAN}\""
-#     fi
-# else
-#     echo "skipping Jmeter test run!"
-# fi
