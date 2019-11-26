@@ -25,3 +25,24 @@ services:
       - "${HOST_PRIVATE_IP}:1099:1099"
     volumes:
       - ${PWD}/volumes/jmeter:/data
+
+  telegraf:
+    image: telegraf:1.12.6-alpine-custom
+    build:
+      context: "telegraf"
+      dockerfile: Dockerfile.x86_64
+      args:
+        - TELEGRAF_VERSION=1.12.6
+    container_name: telegraf
+    hostname: tgf-${HOSTNAME}
+    environment:
+      - INFLUX_DB_HOST=http://influxdb:8086
+      - HOST_PROC=/rootfs/proc
+      - HOST_SYS=/rootfs/sys
+      - HOST_ETC=/rootfs/etc
+    volumes:
+      - ${PWD}/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro

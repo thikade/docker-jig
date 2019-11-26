@@ -38,7 +38,7 @@ services:
       args:
         - TELEGRAF_VERSION=1.12.6
     container_name: telegraf
-    hostname: tgf-appserver01
+    hostname: tgf-${HOSTNAME}
     environment:
       - INFLUX_DB_HOST=http://influxdb:8086
       - HOST_PROC=/rootfs/proc
