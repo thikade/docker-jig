@@ -64,7 +64,7 @@ services:
       JMETER_REMOTE_SERVERS: -Rjmeter-slave:1099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
       # Set a fixed RMI REGISTRY port
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=40000 -Djava.rmi.server.hostname=172.22.0.2
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=40000 -Djava.rmi.server.hostname=jmeter-master
     ports:
       - "40000:40000"
       - "40001:40001"
@@ -87,7 +87,7 @@ services:
       # Set a fixed RMI REGISTRY port
       SERVER_PORT: 1099
       # Fixed RMI ports
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=172.22.0.3
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=jmeter-slave
     ports:
       - "50000:50000"
       - "1099:1099"
