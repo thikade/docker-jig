@@ -29,16 +29,18 @@ RUN echo "version=${JMETER_VERSION}" && \
 
 FROM BASE
 
+VOLUME /data
+
 # Copy contents of current directory to /jmeter
 COPY run.sh             /jmeter/run
 COPY bashrc             /jmeter/.bashrc
+# found no way to automatically create the RMI server certificate without user interaction.
+# thus we are using a prepared one: cn=rmi, validity=700 days
 COPY rmi_keystore.jks   $JMETER_BIN/rmi_keystore.jks
 
 RUN adduser -D -h /jmeter -u 1001 jmeter && \
-  chown -R jmeter /jmeter && \
+  chown -R jmeter /jmeter  /data   && \
   chmod +x /jmeter/run && ln -s /jmeter/run /jmeter/entrypoint.sh
-
-# RUN mkdir /data &&  chown jmeter /data
 
 USER jmeter
 
