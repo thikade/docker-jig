@@ -69,9 +69,7 @@ services:
       # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
       #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
       #   for details on "client.rmi.localport=0"
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=${HOST_PRIVATE_IP}
-    # ports:
-    #   - "40000:40000"
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=${RMI_HOST}
     volumes:
       - ${PWD}/volumes/jmeter:/data
 
@@ -89,7 +87,7 @@ services:
       HEAP: -Xms512m -Xmx512g -XX:MaxMetaspaceSize=256m
       # Set fixed RMI port & hostname!
       SERVER_PORT: 1099
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=${HOST_PRIVATE_IP}
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=${RMI_HOST}
     ports:
       # bind to private IPs only instead of *
       # - "192.168.99.100:50000:50000"
