@@ -34,6 +34,7 @@ services:
     image: telegraf:1.12.6-alpine-custom
     build:
       context: "telegraf"
+      dockerfile: Dockerfile.x86_64
       args:
         - TELEGRAF_VERSION=1.12.6
     container_name: telegraf
