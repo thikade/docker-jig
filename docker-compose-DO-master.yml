@@ -68,33 +68,21 @@ services:
       # Set fixed RMI port & hostname!
       # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
       #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
-      #   for details on "client.rmi.localport=0"
+      #   for details on "-Dclient.rmi.localport"
       JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=40000 -Djava.rmi.server.hostname=${RMI_HOST}
     ports:
       # bind to private IPs only instead of *
       - "${HOST_PRIVATE_IP}:40000:40000"
-    volumes:
-      - ${PWD}/volumes/jmeter:/data
+      - "${HOST_PRIVATE_IP}:40001:40001"
+      - "${HOST_PRIVATE_IP}:40002:40002"
+      - "${HOST_PRIVATE_IP}:40003:40003"
+      - "${HOST_PRIVATE_IP}:40004:40004"
+      - "${HOST_PRIVATE_IP}:40005:40005"
+      - "${HOST_PRIVATE_IP}:40006:40006"
+      - "${HOST_PRIVATE_IP}:40007:40007"
+      - "${HOST_PRIVATE_IP}:40008:40008"
+      - "${HOST_PRIVATE_IP}:40009:40009"
 
-  jmeter-slave:
-    container_name: jmeter-slave
-    image: jmeter:5.2-alpine-generic
-    hostname: jmeter-slave1-priv.2i.at
-    entrypoint: /jmeter/run
-    build:
-      context: "jmeter"
-      args:
-        - JMETER_VERSION=5.2
-    environment:
-      JMETER_ROLE: SLAVE
-      HEAP: -Xms512m -Xmx512g -XX:MaxMetaspaceSize=256m
-      # Set fixed RMI port & hostname!
-      SERVER_PORT: 1099
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=${RMI_HOST}
-    ports:
-      # bind to private IPs only instead of *
-      - "${HOST_PRIVATE_IP}:50000:50000"
-      - "${HOST_PRIVATE_IP}:1099:1099"
     volumes:
       - ${PWD}/volumes/jmeter:/data
 
