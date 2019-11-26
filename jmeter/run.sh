@@ -26,6 +26,13 @@ then
   # container startup will tail log forever
   echo "$TS: tailing jmeter log(s): \"$JM_LOG\" ..."
   echo "-------------------------------"
+  cat << EOT >> $JM_LOG
+
+#############  JMETER CONTAINER STARTED #############
+#############  JMETER CONTAINER STARTED #############
+#############  JMETER CONTAINER STARTED #############
+ 
+EOT
   tail -F $JM_LOG  2>/dev/null
 fi
 
