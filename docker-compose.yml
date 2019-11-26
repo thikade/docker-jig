@@ -65,7 +65,12 @@ services:
       JMETER_REMOTE_SERVERS: -Rjmeter-slave:1099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
       # Set fixed RMI port & hostname!
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=40000 -Djava.rmi.server.hostname=jmeter-master
+      # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
+      #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
+      #   for details on "client.rmi.localport=0"
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Dserver.rmi.localport=40000 -Djava.rmi.server.hostname=jmeter-master
+    ports:
+      - "4000:4000"
     volumes:
       - ${PWD}/volumes/jmeter:/data
 
