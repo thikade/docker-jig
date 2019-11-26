@@ -59,17 +59,20 @@ services:
       args:
         - JMETER_VERSION=5.2
     environment:
+      DEBUG: 1
       JMETER_ROLE: MASTER
       JMETER_PLAN: /data/default_test_plan.jmx
-      JMETER_REMOTE_SERVERS: -R172.27.0.3:51099
+      JMETER_REMOTE_SERVERS: -Rjmeter-slave:1099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
-      JMETER_OPTS: -Dclient.rmi.localport=40000
-    ports:
-      - "40000:40000"
+      # Set fixed RMI port & hostname!
+      # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
+      #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
+      #   for details on "client.rmi.localport=0"
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=jmeter-master
+    # ports:
+    #   - "40000:40000"
     volumes:
       - ${PWD}/volumes/jmeter:/data
-    # depends_on:
-    #   - influxdb
 
   jmeter-slave:
     container_name: jmeter-slave
@@ -82,13 +85,15 @@ services:
     environment:
       JMETER_ROLE: SLAVE
       HEAP: -Xms64m -Xmx512m -XX:MaxMetaspaceSize=256m
-      # Fixed RMI server port
-      RMI_HOST_DEF: -Dserver.rmi.localport=51000
-      # Fixed RMI registry port
-      SERVER_PORT: 51099
+      # Set fixed RMI port & hostname!
+      SERVER_PORT: 1099
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=jmeter-slave
     ports:
-      - "51000:51000"
-      - "51099:51099"
+      # bind to private IPs only instead of *
+      # - "192.168.99.100:50000:50000"
+      # - "192.168.99.100:1099:1099"
+      - "50000:50000"
+      - "1099:1099"
     volumes:
       - ${PWD}/volumes/jmeter:/data
 

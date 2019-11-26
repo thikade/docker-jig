@@ -1,5 +1,6 @@
 volumes/*
 !volumes/jmeter/
-volumes/jmeter/results_*
 volumes/jmeter/*.jtl
+volumes/jmeter/*_report
+volumes/jmeter/jmeter.log
 chronograf/*
