@@ -53,6 +53,8 @@ then
   then
     # test -d $REPORT_DIR || mkdir $REPORT_DIR
     echo -e "\n\n"
+    echo "=> user.props: Protocol         :  $(grep protocol= /data/user.properties)"
+    echo "=> user.props: URL              :  $(grep webUrl=   /data/user.properties)"
     echo "=> user.props: number of threads:  $(grep threads=  /data/user.properties)"
     echo "=> user.props: duration         :  $(grep duration= /data/user.properties)"
     echo "=> user.props: rampUp           :  $(grep rampUp=   /data/user.properties)"
