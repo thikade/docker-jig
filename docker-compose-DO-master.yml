@@ -55,6 +55,9 @@ services:
     container_name: jmeter-master
     image: jmeter:5.2-alpine-generic
     hostname: controller-priv.2i.at
+    ulimits:
+      nproc: 65535
+      nofile: 65535
     build:
       context: "jmeter"
       args:
@@ -62,7 +65,8 @@ services:
     environment:
       DEBUG: 1
       JMETER_ROLE: MASTER
-      JMETER_PLAN: /data/default_test_plan.jmx
+      # JMETER_PLAN: /data/default_test_plan.jmx
+      JMETER_PLAN: /data/Lasttest-AS2020.jmx
       JMETER_REMOTE_SERVERS: -Rjmeter-slave1-priv.2i.at:1099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
       # Set fixed RMI port & hostname!

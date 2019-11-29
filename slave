@@ -1,0 +1,4 @@
+#!/bin/bash
+EXECDIR=$(dirname $0)
+. $EXECDIR/envrc
+docker-compose -f $EXECDIR/docker-compose-DO-slave.yml $*
