@@ -31,7 +31,7 @@ then
 #############  JMETER CONTAINER STARTED #############
 #############  JMETER CONTAINER STARTED #############
 #############  JMETER CONTAINER STARTED #############
- 
+
 EOT
   tail -F $JM_LOG  2>/dev/null
 fi
@@ -53,15 +53,25 @@ then
   then
     # test -d $REPORT_DIR || mkdir $REPORT_DIR
     echo -e "\n\n"
-    echo "=> user.props: Protocol         :  $(grep protocol= /data/user.properties)"
-    echo "=> user.props: URL              :  $(grep webUrl=   /data/user.properties)"
-    echo "=> user.props: number of threads:  $(grep threads=  /data/user.properties)"
-    echo "=> user.props: duration         :  $(grep duration= /data/user.properties)"
-    echo "=> user.props: rampUp           :  $(grep rampUp=   /data/user.properties)"
+    echo "=> user.props: numThreads :  $(grep threads=  /data/user.properties)"
+    echo "=> user.props: duration   :  $(grep duration= /data/user.properties)"
+    echo "=> user.props: rampUp     :  $(grep rampUp=   /data/user.properties)"
+    echo ""
+    echo "=> user.props: URL        :  $(grep webUrl=   /data/user.properties)"
+    echo "=> user.props: Protocol   :  $(grep protocol= /data/user.properties)"
     echo -e "\n\n"
     echo "$TS : starting the JMeter MASTER process ..."
     test -n "$DEBUG" && set -x
-    jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties ${JMETER_REMOTE_SERVERS} $*
+
+    # detect RUN MODE
+    if [ "$(basename $0)" = "runlocal" ]; then
+      echo -e "\nLOCAL MODE: no remotes."
+      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
+    else
+      echo -e "\nREMOTE MODE: remotes: ${JMETER_REMOTE_SERVERS}"
+      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties ${JMETER_REMOTE_SERVERS} $*
+    fi
+
     set +x
     echo "$(date $TS_FORMAT) : finished JMeter run."
   else
