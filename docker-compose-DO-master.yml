@@ -82,6 +82,7 @@ services:
       - "${HOST_PRIVATE_IP}:40007:40007"
       - "${HOST_PRIVATE_IP}:40008:40008"
       - "${HOST_PRIVATE_IP}:40009:40009"
+      - "4445:4445"
 
     volumes:
       - ${PWD}/volumes/jmeter:/data
