@@ -5,11 +5,12 @@ volumes:
 
 services:
   influxdb:
-    image: influxdb:1.7.9-alpine-custom
-    build:
-      context: "influxdb"
-      args:
-        - INFLUXDB_VERSION=1.7.9
+    image: influxdb:1.7.9-alpine
+    # image: influxdb:1.7.9-alpine-custom
+    # build:
+    #   context: "influxdb"
+    #   args:
+    #     - INFLUXDB_VERSION=1.7.9
     container_name: influxdb
     ports:
       - "8086:8086"
@@ -31,12 +32,13 @@ services:
       - influxdb
 
   telegraf:
-    image: telegraf:1.12.6-alpine-custom
-    build:
-      context: "telegraf"
-      dockerfile: Dockerfile.x86_64
-      args:
-        - TELEGRAF_VERSION=1.12.6
+    image: telegraf:1.12.6-alpine
+    # image: telegraf:1.12.6-alpine-custom
+    # build:
+    #   context: "telegraf"
+    #   dockerfile: Dockerfile.x86_64
+    #   args:
+    #     - TELEGRAF_VERSION=1.12.6
     container_name: telegraf
     hostname: tgf-appserver01
     environment:
@@ -60,7 +62,7 @@ services:
     build:
       context: "jmeter"
       args:
-        - JMETER_VERSION=5.2
+        - JMETER_VERSION=5.2.1
     environment:
       DEBUG: 1
       JMETER_ROLE: MASTER
@@ -87,7 +89,7 @@ services:
     build:
       context: "jmeter"
       args:
-        - JMETER_VERSION=5.2
+        - JMETER_VERSION=5.2.1
     environment:
       JMETER_ROLE: SLAVE
       HEAP: -Xms512m -Xmx512g -XX:MaxMetaspaceSize=256m
