@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ~/stat-lasttest/
+git status --untracked-files=no
+git pull
+cp  ~/stat-lasttest/Lasttest-AS2020.jmx   ~/jmeter-docker/volumes/jmeter/
+cd ~/jmeter-docker
