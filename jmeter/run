@@ -1,8 +1,40 @@
 #!/bin/bash
 
+# trap "echo 'SIGTERM received. Stopping jmeter process ....'; kill 1" TERM
+
 export PATH=$PATH:${JMETER_BIN}
 
+#### SIMPLE OPTIONS PARSING START
+OPTIONS_STRING=":t"
+JMX_FILE=
+HELP=
+
+while getopts ":h:t:" options; do
+  case "${options}" in
+    t)
+      JMX_FILE=${OPTARG}
+      test ! -f  "$JMX_FILE" && {
+        echo "ERROR: JMX testplan cannot be read: \"$JMX_FILE\" !"
+        exit 2
+      }
+      JMETER_PLAN=${JMX_FILE-$JMETER_PLAN}
+      echo "overriding ENV JMX file with: \"$JMETER_PLAN\""
+      shift 2
+      ;;
+    h)
+      HELP=${OPTARG}; usage; exit 1
+      ;;
+    :) echo "ERROR: required option argument missing! "                                        # If expected argument omitted:
+      exit 3
+      ;;
+    *)
+      ;;
+  esac
+done
+#### SIMPLE OPTIONS PARSING END
+echo "ENV variables: ----------------"
 env | sort | grep JMETER
+echo "-------------------------------"
 
 echo "-------------------------------"
 echo "new JMETER HEAP=$HEAP"
@@ -53,6 +85,8 @@ then
   then
     # test -d $REPORT_DIR || mkdir $REPORT_DIR
     echo -e "\n\n"
+    echo "=> JMX testplan : $JMETER_PLAN "
+    echo -e "\n"
     echo "=> user.props: numThreads :  $(grep threads=  /data/user.properties)"
     echo "=> user.props: duration   :  $(grep duration= /data/user.properties)"
     echo "=> user.props: rampUp     :  $(grep rampUp=   /data/user.properties)"
