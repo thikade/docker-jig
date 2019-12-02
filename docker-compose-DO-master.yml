@@ -64,7 +64,7 @@ services:
     build:
       context: "jmeter"
       args:
-        - JMETER_VERSION=5.2
+        - JMETER_VERSION=5.2.1
     environment:
       DEBUG: 1
       JMETER_ROLE: MASTER
