@@ -25,7 +25,9 @@ RUN echo "version=${JMETER_VERSION}" && \
   tar -xzf apache-jmeter.tgz --strip-components=1 && \
   rm /jmeter/apache-jmeter.tgz
 
-
+# add concurrent Thread Group v2.9 and some other plugins
+ADD https://jmeter-plugins.org/files/packages/jpgc-casutg-2.9.zip https://jmeter-plugins.org/files/packages/jpgc-cmd-2.2.zip  /jmeter/
+RUN unzip -o jpgc-casutg-2.9.zip && unzip -o jpgc-cmd-2.2.zip
 
 FROM BASE
 
