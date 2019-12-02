@@ -53,7 +53,8 @@ services:
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
 
-  jmeter-master:
+  # jmeter-master
+  master:
     container_name: jmeter-master
     image: jmeter:5.2-alpine-generic
     ulimits:
@@ -79,7 +80,8 @@ services:
     volumes:
       - ${PWD}/volumes/jmeter:/data
 
-  jmeter-slave:
+  # jmeter-slave
+  slave:
     container_name: jmeter-slave
     image: jmeter:5.2-alpine-generic
     entrypoint: /jmeter/run
