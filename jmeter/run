@@ -95,15 +95,18 @@ then
     echo "=> user.props: Protocol   :  $(grep protocol= /data/user.properties)"
     echo -e "\n\n"
     echo "$TS : starting the JMeter MASTER process ..."
-    test -n "$DEBUG" && set -x
 
     # detect RUN MODE
     if [ "$(basename $0)" = "runlocal" ]; then
       echo -e "\nLOCAL MODE: no remotes."
+      test -n "$DEBUG" && set -x
       jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
+      set +x
     else
       echo -e "\nREMOTE MODE: remotes: ${JMETER_REMOTE_SERVERS}"
+      test -n "$DEBUG" && set -x
       jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties ${JMETER_REMOTE_SERVERS} $*
+      set +x
     fi
 
     set +x
