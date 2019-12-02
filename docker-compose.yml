@@ -103,7 +103,7 @@ services:
       - "50000:50000"
       - "1099:1099"
     volumes:
-      - ${PWD}/volumes/jmeter:/data
+      - ${PWD}/volumes/jmeter-slave:/data
 
   grafana:
     container_name: grafana

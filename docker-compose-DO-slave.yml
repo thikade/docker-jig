@@ -27,7 +27,7 @@ services:
       - "${HOST_PRIVATE_IP}:50000:50000"
       - "${HOST_PRIVATE_IP}:1099:1099"
     volumes:
-      - ${PWD}/volumes/jmeter:/data
+      - ${PWD}/volumes/jmeter-slave:/data
 
   telegraf:
     image: telegraf:1.12.6-alpine
