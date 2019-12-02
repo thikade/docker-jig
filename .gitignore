@@ -1,4 +1,5 @@
 volumes/*
+!volumes/jmeter-slave/
 !volumes/jmeter/
 volumes/jmeter/*.jtl
 volumes/jmeter/*_report
