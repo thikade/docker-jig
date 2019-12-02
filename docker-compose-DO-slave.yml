@@ -6,7 +6,7 @@ volumes:
 services:
   # jmeter-slave
   slave:
-    container_name: jmeter-slave
+    container_name: slave
     image: jmeter:5.2-alpine-generic
     hostname: jmeter-slave1-priv.2i.at
     entrypoint: /jmeter/run

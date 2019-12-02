@@ -55,7 +55,7 @@ services:
 
   # jmeter-master
   master:
-    container_name: jmeter-master
+    container_name: master
     image: jmeter:5.2-alpine-generic
     ulimits:
       nproc: 65535
@@ -82,7 +82,7 @@ services:
 
   # jmeter-slave
   slave:
-    container_name: jmeter-slave
+    container_name: slave
     image: jmeter:5.2-alpine-generic
     entrypoint: /jmeter/run
     ulimits:

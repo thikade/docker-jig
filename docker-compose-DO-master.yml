@@ -55,7 +55,7 @@ services:
 
   # jmeter-master
   master:
-    container_name: jmeter-master
+    container_name: master
     image: jmeter:5.2-alpine-generic
     hostname: controller-priv.2i.at
     ulimits:
