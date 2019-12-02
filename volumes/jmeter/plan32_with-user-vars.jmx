@@ -110,9 +110,9 @@
           <intProp name="LoopController.loops">-1</intProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">${TG_NUM_THREADS}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${__P(rampUp,10)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${TG_RAMPUP}</stringProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.duration">${__P(duration,1)}</stringProp>
+        <stringProp name="ThreadGroup.duration">TG_DURATION</stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
@@ -121,7 +121,17 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="TG_NUM_THREADS" elementType="Argument">
               <stringProp name="Argument.name">TG_NUM_THREADS</stringProp>
-              <stringProp name="Argument.value">${__P(threads,1)}</stringProp>
+              <stringProp name="Argument.value">${__P(threads,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="TG_RAMPUP" elementType="Argument">
+              <stringProp name="Argument.name">TG_RAMPUP</stringProp>
+              <stringProp name="Argument.value">${__P(rampUp,)}</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="TG_DURATION" elementType="Argument">
+              <stringProp name="Argument.name">TG_DURATION</stringProp>
+              <stringProp name="Argument.value">${__P(duration,99)}</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
