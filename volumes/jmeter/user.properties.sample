@@ -34,3 +34,5 @@ server.rmi.ssl.keystore.file=/jmeter/bin/rmi_keystore.jks
 #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
 #   for details on "client.rmi.localport=0"
 server.rmi.ssl.disable=true
+
+hc.parameters.file=/data/hc.parameters
