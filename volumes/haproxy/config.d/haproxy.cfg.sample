@@ -7,9 +7,16 @@ global
   ca-base  /etc/ssl/certs
   crt-base /etc/ssl/private
 
-  ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
-  # ssl-default-bind-options no-sslv3
-  ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
+  # generated 2019-12-04, https://ssl-config.mozilla.org/#server=haproxy&server-version=2.1&config=modern&hsts=false
+  # modern configuration, tweak to your needs
+  ssl-default-bind-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+  ssl-default-bind-options no-sslv3 no-tlsv10 no-tlsv11 no-tlsv12 no-tls-tickets
+
+  ssl-default-server-ciphersuites TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+  ssl-default-server-options no-sslv3 no-tlsv10 no-tlsv11 no-tlsv12 no-tls-tickets
+
+  ssl-dh-param-file /tmp/dhparam.pem
+
 
 defaults
   option forwardfor
@@ -32,7 +39,6 @@ defaults
 
 frontend http-in
   bind *:80
-  # mode http
 
   http-request add-header X-Forwarded-Proto http
 
@@ -45,21 +51,17 @@ frontend http-in
 
 
 frontend https_in
-  # bind *:443 ssl crt /usr/local/etc/haproxy/default.pem crt /usr/local/etc/haproxy/certs.d ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
-  bind *:443 ssl crt /usr/local/etc/haproxy/certs.d/ ciphers ECDHE-RSA-AES256-SHA:RC4-SHA:RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM
-  # mode http
+  bind *:443 ssl crt /usr/local/etc/haproxy/certs.d/ alpn h2,http/1.1
 
   http-request add-header X-Forwarded-Proto https
   default_backend default_http_backend
 
 
 backend letsencrypt_http
-  # mode http
   server letsencrypt_http_srv 127.0.0.1:8080
 
 
 backend default_http_backend
-  # mode http
   balance leastconn
   option tcp-check
   option log-health-checks
