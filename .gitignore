@@ -5,3 +5,16 @@ volumes/jmeter/*.jtl
 volumes/jmeter/*_report
 volumes/jmeter/jmeter.log
 chronograf/*
+
+
+!volumes/haproxy
+!volumes/haproxy/config.d
+!volumes/haproxy/certs.d
+!volumes/haproxy/letsencrypt
+
+volumes/haproxy/config.d/*
+!volumes/haproxy/config.d/haproxy.cfg.sample
+
+volumes/haproxy/certs.d/**
+
+volumes/haproxy/letsencrypt/**

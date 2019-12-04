@@ -4,6 +4,31 @@ volumes:
   chronograf:
 
 services:
+  haproxy:
+    restart: unless-stopped
+    container_name: haproxy
+    image: haproxy-certbot:2.1.0-buster
+    hostname: haproxy
+    # entrypoint:
+    ulimits:
+      nproc: 16000
+      nofile: 16000
+    # cap_add:
+    #   - NET_ADMIN
+    build:
+      # dockerfile: Dockerfile
+      dockerfile: Dockerfile
+      context: haproxy
+    # environment:
+    #   DUMMY: xxx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ${PWD}/volumes/haproxy/config.d:/config
+      - ${PWD}/volumes/haproxy/letsencrypt:/etc/letsencrypt
+      - ${PWD}/volumes/haproxy/certs.d:/usr/local/etc/haproxy/certs.d
+
   influxdb:
     image: influxdb:1.7.9-alpine
     # image: influxdb:1.7.9-alpine-custom
