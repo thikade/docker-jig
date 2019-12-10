@@ -111,9 +111,12 @@ then
       jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_SERVERS} $*
       set +x
     fi
-
     set +x
     echo "$(date $TS_FORMAT) : finished JMeter run."
+    sleep 1
+    test -f /data/errorLog.csv && mv /data/errorLog.csv ${PREFIX}_errorLog.csv
+    test -f /data/errorLog.xml && mv /data/errorLog.xml ${PREFIX}_errorLog.xml
+    ls -l  ${PREFIX}_errorLog*
   else
     echo "ERROR: unable to read JMeter plan: \"$JMETER_PLAN\" !"
   fi
