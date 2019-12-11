@@ -12,3 +12,15 @@ server.rmi.ssl.keystore.file=/jmeter/bin/rmi_keystore.jks
 server.rmi.ssl.disable=true
 
 hc.parameters.file=/data/hc.parameters
+
+# user-id distribution for 3 slaves.
+# remove 2 pair of lines as required PER SLAVE, so that UIDs DO NOT OVERLAP between all slaves!!
+
+## USERCOUNTER_SLAVE_START=0
+## USERCOUNTER_SLAVE_END=2999
+
+## USERCOUNTER_SLAVE_START=3000
+## USERCOUNTER_SLAVE_END=5999
+
+## USERCOUNTER_SLAVE_START=6000
+## USERCOUNTER_SLAVE_END=8999
