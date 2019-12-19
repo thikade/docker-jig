@@ -97,7 +97,7 @@ services:
       JMETER_ROLE: MASTER
       # JMETER_PLAN: /data/default_test_plan.jmx
       JMETER_PLAN: /data/Lasttest-AS2020.jmx
-      JMETER_REMOTE_SERVERS: -Rjmeter-slave1-priv.2i.at:1099,jmeter-slave2-priv.2i.at:1099,jmeter-slave3-priv.2i.at:1099,jmeter-slave4-priv.2i.at:1099,jmeter-slave5-priv.2i.at:1099,jmeter-slave6-priv.2i.at:1099
+      JMETER_REMOTE_SERVERS: -Rjmeter-slave1-priv.2i.at:1099
       HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
       # Set fixed RMI port & hostname!
       # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463

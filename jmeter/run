@@ -107,9 +107,20 @@ then
       jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
       set +x
     else
-      echo -e "\nREMOTE MODE: remotes: ${JMETER_REMOTE_SERVERS}"
+      NUM_SLAVES=$(dig +short -t txt jmeter-slave-count.2i.at | tr -d '"')
+      # if NUM_SLAVES is a number, use it to build Remotes' string
+      if [[ $NUM_SLAVES =~ ^[0-9]+$ ]] ; then
+        JMETER_REMOTE_SERVERS="-R"
+        for i in $(seq 1 $NUM_SLAVES); do
+          JMETER_REMOTE_SERVERS="${JMETER_REMOTE_SERVERS}jmeter-slave${i}-priv.2i.at:1099,"
+        done
+        # remove final ","
+        JMETER_REMOTE_SERVERS="${JMETER_REMOTE_SERVERS%,}"
+      fi
+      JMETER_REMOTE_STRING=${JMETER_REMOTE_SERVERS}
+      echo -e "\nREMOTE MODE: remote slaves: ${JMETER_REMOTE_STRING}"
       test -n "$DEBUG" && set -x
-      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_SERVERS} $*
+      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_STRING} $*
       set +x
     fi
     set +x
