@@ -19,7 +19,7 @@ services:
         - JMETER_VERSION=5.2.1
     environment:
       JMETER_ROLE: SLAVE
-      HEAP: -Xms4g -Xmx4g -XX:MaxMetaspaceSize=512m
+      HEAP: -Xms10g -Xmx10g -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/
       # Set fixed RMI port & hostname!
       SERVER_PORT: 1099
       JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=${RMI_HOST}

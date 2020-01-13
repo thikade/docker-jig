@@ -99,7 +99,7 @@ services:
       # JMETER_PLAN: /data/default_test_plan.jmx
       JMETER_PLAN: /data/Lasttest-AS2020.jmx
       JMETER_REMOTE_SERVERS: -Rjmeter-slave1-priv.2i.at:1099
-      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
+      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/
       # Set fixed RMI port & hostname!
       # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
       #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
