@@ -29,6 +29,9 @@ RUN echo "version=${JMETER_VERSION}" && \
 ADD https://jmeter-plugins.org/files/packages/jpgc-casutg-2.9.zip https://jmeter-plugins.org/files/packages/jpgc-cmd-2.2.zip  /jmeter/
 RUN unzip -o jpgc-casutg-2.9.zip && unzip -o jpgc-cmd-2.2.zip
 
+ENV JOLOKIA_VERSION 1.6.2
+ADD https://search.maven.org/remotecontent?filepath=org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /jmeter/jolokia-jvm-agent.jar
+
 FROM BASE
 
 VOLUME /data

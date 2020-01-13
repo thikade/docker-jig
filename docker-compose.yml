@@ -70,6 +70,7 @@ services:
     hostname: tgf-appserver01
     environment:
       - INFLUX_DB_HOST=http://influxdb:8086
+      - JOLOKIA_HOST=http://master:7777/jolokia
       - HOST_PROC=/rootfs/proc
       - HOST_SYS=/rootfs/sys
       - HOST_ETC=/rootfs/etc
@@ -102,6 +103,7 @@ services:
       #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
       #   for details on "client.rmi.localport=0"
       JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=jmeter-master
+      JAVA_OPTS: -javaagent:/jmeter/jolokia-jvm-agent.jar=port=7777,host=0.0.0.0
     # ports:
     #   - "40000:40000"
     volumes:

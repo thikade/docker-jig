@@ -23,6 +23,7 @@ services:
       # Set fixed RMI port & hostname!
       SERVER_PORT: 1099
       JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=${RMI_HOST}
+      JAVA_OPTS: -javaagent:/jmeter/jolokia-jvm-agent.jar=port=7777,host=0.0.0.0
     ports:
       # bind to private IPs only instead of *
       - "${HOST_PRIVATE_IP}:50000:50000"
@@ -42,6 +43,7 @@ services:
     hostname: tgf-${HOSTNAME}
     environment:
       - INFLUX_DB_HOST=http://controller-priv.2i.at:8086
+      - JOLOKIA_HOST=http://slave:7777/jolokia
       - HOST_PROC=/rootfs/proc
       - HOST_SYS=/rootfs/sys
       - HOST_ETC=/rootfs/etc
