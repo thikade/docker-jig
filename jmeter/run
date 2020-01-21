@@ -39,6 +39,7 @@ echo "-------------------------------"
 
 echo "-------------------------------"
 echo "new JMETER HEAP=$HEAP"
+env | grep GC_ALGO
 echo "-------------------------------"
 
 echo ""
@@ -78,8 +79,7 @@ then
   while true; do            # restart slave when it exits
     echo -e "\n\n======================================================================"
     echo "$(date $TS_FORMAT): starting the JMeter SLAVE server process ..."
-    cd /jmeter/bin/
-    ./jmeter-server
+    jmeter-server
     sleep 5
   done
 
