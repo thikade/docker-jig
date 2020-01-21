@@ -34,6 +34,7 @@ done
 #### SIMPLE OPTIONS PARSING END
 echo "ENV variables: ----------------"
 env | sort | grep JMETER
+env | grep JVM_ARGS
 echo "-------------------------------"
 
 echo "-------------------------------"
@@ -77,7 +78,8 @@ then
   while true; do            # restart slave when it exits
     echo -e "\n\n======================================================================"
     echo "$(date $TS_FORMAT): starting the JMeter SLAVE server process ..."
-    jmeter-server
+    cd /jmeter/bin/
+    ./jmeter-server
     sleep 5
   done
 
@@ -100,11 +102,13 @@ then
     echo -e "\n\n"
     echo "$TS : starting the JMeter MASTER process ..."
 
+    cd /jmeter/bin/
+
     # detect RUN MODE
     if [ "$(basename $0)" = "runlocal" ]; then
       echo -e "\nLOCAL MODE: no remotes."
       test -n "$DEBUG" && set -x
-      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
+      ./jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
       set +x
     else
       NUM_SLAVES=$(dig +short -t txt jmeter-slave-count.2i.at | tr -d '"')
@@ -120,7 +124,7 @@ then
       JMETER_REMOTE_STRING=${JMETER_REMOTE_SERVERS}
       echo -e "\nREMOTE MODE: remote slaves: ${JMETER_REMOTE_STRING}"
       test -n "$DEBUG" && set -x
-      jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_STRING} $*
+      ./jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_STRING} $*
       set +x
     fi
     set +x
