@@ -36,10 +36,10 @@ echo "ENV variables: ----------------"
 env | sort | grep JMETER
 env | grep JVM_ARGS
 echo "-------------------------------"
-
-echo "-------------------------------"
 echo "new JMETER HEAP=$HEAP"
 env | grep GC_ALGO
+echo "-------------------------------"
+echo "JOLOKIA Host:Port = $JOLOKIA_HOST:$JOLOKIA_PORT"
 echo "-------------------------------"
 
 echo ""
@@ -75,11 +75,20 @@ fi
 if [ "$JMETER_ROLE" = "SLAVE" ]
 then
   # this is a slave container
+  # remove default jmeter server-log
+  sed -i 's/-j jmeter-server.log//' bin/jmeter-server
+
   tail -F /jmeter/jmeter-server.log 2>/dev/null &     # slaves use their own log file
   while true; do            # restart slave when it exits
     echo -e "\n\n======================================================================"
     echo "$(date $TS_FORMAT): starting the JMeter SLAVE server process ..."
-    jmeter-server
+    cd /jmeter/bin/
+
+    # attach Jolokia agent to JVM once it is started
+    ( sleep 5; java -jar /jmeter/jolokia-jvm-agent.jar --host=$JOLOKIA_HOST --port=$JOLOKIA_PORT start ".*ApacheJMeter.jar.*" >> /jmeter/jmeter-server.log) &
+
+    ./jmeter-server -j /jmeter/jmeter-server.log
+    echo -e "\n\n\n\n" >> /jmeter/jmeter-server.log
     sleep 5
   done
 
@@ -108,6 +117,10 @@ then
     if [ "$(basename $0)" = "runlocal" ]; then
       echo -e "\nLOCAL MODE: no remotes."
       test -n "$DEBUG" && set -x
+
+      # attach Jolokia agent to JVM once it is started
+      ( sleep 5; java -jar /jmeter/jolokia-jvm-agent.jar --host=$JOLOKIA_HOST --port=$JOLOKIA_PORT start ".*ApacheJMeter.jar.*" >> ${JM_LOG}) &
+
       ./jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties $*
       set +x
     else
@@ -124,6 +137,10 @@ then
       JMETER_REMOTE_STRING=${JMETER_REMOTE_SERVERS}
       echo -e "\nREMOTE MODE: remote slaves: ${JMETER_REMOTE_STRING}"
       test -n "$DEBUG" && set -x
+
+      # attach Jolokia agent to JVM once it is started
+      ( sleep 5; java -jar /jmeter/jolokia-jvm-agent.jar --host=$JOLOKIA_HOST --port=$JOLOKIA_PORT start ".*ApacheJMeter.jar.*" >> ${JM_LOG}) &
+
       ./jmeter -n -t ${JMETER_PLAN} -j ${JM_LOG} -l ${SAMPLES_LOG} -e -o $REPORT_DIR -G/data/user.properties -X ${JMETER_REMOTE_STRING} $*
       set +x
     fi

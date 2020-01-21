@@ -70,7 +70,7 @@ services:
     hostname: tgf-appserver01
     environment:
       - INFLUX_DB_HOST=http://influxdb:8086
-      - JOLOKIA_HOST=http://master:7777/jolokia
+      - JOLOKIA_HOST=http://slave:7777/jolokia
       - HOST_PROC=/rootfs/proc
       - HOST_SYS=/rootfs/sys
       - HOST_ETC=/rootfs/etc
@@ -97,13 +97,14 @@ services:
       JMETER_ROLE: MASTER
       JMETER_PLAN: /data/default_test_plan.jmx
       JMETER_REMOTE_SERVERS: -Rjmeter-slave:1099
-      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m
+      HEAP: -Xms2g -Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/
       # Set fixed RMI port & hostname!
       # see https://bz.apache.org/bugzilla/show_bug.cgi?id=62463
       #   and https://stackoverflow.com/questions/50752126/unable-to-start-jmeter-4-0-client-with-ssl-rmi/50888705
       #   for details on "client.rmi.localport=0"
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=jmeter-master
-      JVM_ARGS: -javaagent:/jmeter/jolokia-jvm-agent.jar=port=7777,host=0.0.0.0
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dclient.rmi.localport=0 -Djava.rmi.server.hostname=master -Dserver.rmi.ssl.disable=true
+      JOLOKIA_HOST: 0.0.0.0
+      JOLOKIA_PORT: 7777
     # ports:
     #   - "40000:40000"
     volumes:
@@ -123,10 +124,12 @@ services:
         - JMETER_VERSION=5.2.1
     environment:
       JMETER_ROLE: SLAVE
-      HEAP: -Xms512m -Xmx512g -XX:MaxMetaspaceSize=256m
+      HEAP: -Xms512m -Xmx512g -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/
       # Set fixed RMI port & hostname!
       SERVER_PORT: 1099
-      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=jmeter-slave
+      JMETER_OPTS: -Djava.net.preferIPv4Stack=true -Dserver.rmi.localport=50000 -Djava.rmi.server.hostname=slave -Dserver.rmi.ssl.disable=true
+      JOLOKIA_HOST: 0.0.0.0
+      JOLOKIA_PORT: 7777
     ports:
       # bind to private IPs only instead of *
       # - "192.168.99.100:50000:50000"

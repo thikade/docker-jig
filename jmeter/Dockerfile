@@ -2,7 +2,7 @@
 FROM alpine:latest as BASE
 
 # Install openjre (required in order to run jmeter)
-RUN apk add openjdk8-jre bash bind-tools
+RUN apk add openjdk8-jre openjdk8 bash bind-tools
 
 # Set work directory to be /jmeter
 WORKDIR /jmeter
