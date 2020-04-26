@@ -41,6 +41,8 @@ services:
       - "8086:8086"
     environment:
       - INFLUXDB_DB=jmeter
+      - INFLUXDB_CONFIG_PATH=/var/lib/influxdb/influxdb.conf
+
     volumes:
       - ${PWD}/volumes/influxdb:/var/lib/influxdb
 
